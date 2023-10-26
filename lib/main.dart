@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'domain/models/post_preview.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -37,9 +41,20 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() {
-     final dio = Dio();
+  Future<void> _incrementCounter() async{
+    final dio = Dio(BaseOptions(
+      baseUrl: 'https://dummyapi.io/data/v1/',
+      headers: {
+        'app-id': '652a57047041f526ae199423'
+        },
+    ),
+    );
+
+    dio.get('post').then((value) => log(value.toString()));
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,42 +64,78 @@ class _MyHomePageState extends State<MyHomePage> {
 
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
-        title: Text(widget.title),
+        leading: Icon(Icons.add),
+        title: Text('AppBar'),
+        actions: [
+          Icon(Icons.add_card_outlined),
+          Icon(Icons.read_more),
+          Icon(Icons.read_more),
+          Icon(Icons.read_more),
+        ],
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      body: PostPreviewCard(
+        postPreview: PostPreview(
+          id: 'asds',
+          text: 'asdasdasdasdasd',
+          image: 'hasdjhahsdhjasd',
+          likes: 3,
+          tags: ['asdasd', 'asdasd'],
+          publishDate: '11.11.11',
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class PostPreviewCard extends StatelessWidget {
+  final PostPreview postPreview;
+
+  const PostPreviewCard({
+    required this.postPreview,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Name',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text('LastName'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Icon(Icons.more_horiz),
+            ],
+          ),
+        ),
+      ], // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
